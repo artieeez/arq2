@@ -24,7 +24,7 @@ for BIN in "${BINS[@]}"; do
 
   # Run perf and collect results
   perf stat -x, -e instructions,cycles,L1-dcache-loads,L1-dcache-load-misses,LLC-loads,LLC-load-misses,dTLB-loads,dTLB-load-misses "$BIN_PATH" 2>&1 \
-    | awk -F',' 'NF>=3 { gsub(/^[ \t]+|[ \t]+$/, "", $1); gsub(/^[ \t]+|[ \t]+$/, "", $2); gsub(/^[ \t]+|[ \t]+$/, "", $3); print $2 "," $1 "," $3 }' \
+    | awk -F',' 'NF>=3 { gsub(/^[ \t]+|[ \t]+$/, "", $1); gsub(/^[ \t]+|[ \t]+$/, "", $2); gsub(/^[ \t]+|[ \t]+$/, "", $3); print $3 "," $1 "," $2 }' \
     >> "$CSV_FILE"
 done
 
