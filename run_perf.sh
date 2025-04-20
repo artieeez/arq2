@@ -2,6 +2,9 @@
 
 set -e
 
+# Default to 1 run if not specified
+RUNS=${1:-1}
+
 BINS=("quicksort" "matrix_mul" "dfs")
 OUT_DIR="out"
 RESULTS_DIR="results"
@@ -9,8 +12,6 @@ RESULTS_DIR="results"
 mkdir -p "$RESULTS_DIR"
 
 for BIN in "${BINS[@]}"; do
-  echo "Running perf for $BIN..."
-
   BIN_PATH="$OUT_DIR/$BIN"
   CSV_FILE="$RESULTS_DIR/${BIN}.csv"
 
@@ -19,17 +20,22 @@ for BIN in "${BINS[@]}"; do
     continue
   fi
 
-  # Write header if file does not exist
+  echo "Running perf for $BIN - $RUNS time(s)..."
+
+  # Write header if the CSV does not exist
   if [ ! -f "$CSV_FILE" ]; then
     echo "timestamp,instructions,cycles,L1-dcache-loads,L1-dcache-load-misses,LLC-loads,LLC-load-misses,dTLB-loads,dTLB-load-misses" > "$CSV_FILE"
   fi
 
-  # Run perf and capture values only
-  PERF_OUTPUT=$(perf stat -x, -e instructions,cycles,L1-dcache-loads,L1-dcache-load-misses,LLC-loads,LLC-load-misses,dTLB-loads,dTLB-load-misses "$BIN_PATH" 2>&1)
+  for ((i = 1; i <= RUNS; i++)); do
+    echo " → Run $i"
 
-  VALUES=$(echo "$PERF_OUTPUT" | awk -F',' 'NF>=3 { gsub(/[ \t]/, "", $1); print $1 }' | paste -sd "," -)
+    PERF_OUTPUT=$(perf stat -x, -e instructions,cycles,L1-dcache-loads,L1-dcache-load-misses,LLC-loads,LLC-load-misses,dTLB-loads,dTLB-load-misses "$BIN_PATH" 2>&1)
 
-  echo "$(date -Iseconds),$VALUES" >> "$CSV_FILE"
+    VALUES=$(echo "$PERF_OUTPUT" | awk -F',' 'NF>=3 { gsub(/[ \t]/, "", $1); print $1 }' | paste -sd "," -)
+
+    echo "$(date -Iseconds),$VALUES" >> "$CSV_FILE"
+  done
 done
 
-echo "✅ Individual CSV files saved to '$RESULTS_DIR/'"
+echo "✅ All results saved to '$RESULTS_DIR/'"
