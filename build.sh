@@ -8,6 +8,9 @@ g++ -O2 -g ./bin/quicksort.cpp -o ./out/quicksort
 echo "Compiling matrix_mul..."
 g++ -O2 -g ./bin/matrix_mul.cpp -o ./out/matrix_mul
 
+echo "Compiling matrix_mul_alt..."
+g++ -O2 -g ./bin/matrix_mul_alt.cpp -o ./out/matrix_mul_alt
+
 echo "Compiling dfs..."
 g++ -O2 -g ./bin/dfs.cpp -o ./out/dfs
 

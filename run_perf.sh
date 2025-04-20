@@ -5,7 +5,7 @@ set -e
 # Default to 1 run if not specified
 RUNS=${1:-1}
 
-BINS=("quicksort" "matrix_mul" "dfs")
+BINS=("quicksort" "matrix_mul" "matrix_mul_alt" "dfs")
 OUT_DIR="out"
 RESULTS_DIR="results"
 
